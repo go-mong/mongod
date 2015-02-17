@@ -5,6 +5,7 @@ import (
 )
 
 type Mongod interface {
+	Clone() (*mgo.Session, *mgo.Database)
 	Session() *mgo.Session
 	Start() (*mgo.Database, error)
 	Stop(...func(*mgo.Database))
