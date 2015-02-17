@@ -10,26 +10,33 @@ type Mongod interface {
 	Stop(...func(*mgo.Database))
 }
 
-// mongod provides a way to start/stop an mgo.Session
-type mongod struct {
-	session *mgo.Session
-	c       *mgo.Session
-	db      *mgo.Database
-
+type Config struct {
 	Addr     string
 	Database string
 }
 
+// mongod provides a way to start/stop an mgo.Session
+type mongod struct {
+	*Config
+
+	// session is the original dial session
+	session *mgo.Session
+	c       *mgo.Session
+	db      *mgo.Database
+
+}
+
 var _ Mongod = &mongod{}
 
-func New(name string, opts ...func(m *mongod)) *mongod {
+func New(name string, opts ...func(c *Config)) *mongod {
 	m := &mongod{
-		Addr:     "127.0.0.1:27017",
-		Database: name,
+		Config: &Config{
+			Addr:     "127.0.0.1:27017",
+			Database: name,
+		},
 	}
-
 	for _, v := range opts {
-		v(m)
+		v(m.Config)
 	}
 	return m
 }
