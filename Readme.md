@@ -1,13 +1,13 @@
 # mongod
 
-[![Build Status](https://travis-ci.org/go-mong/mongod.svg?branch=master)](https://travis-ci.org/go-mong/mongod)
-[![GoDoc](https://godoc.org/github.com/go-mong/mongod.v1?status.svg)](http://godoc.org/github.com/go-mong/mongod.v1)
+[![Build Status](https://travis-ci.org/mong-go/mongod.svg?branch=master)](https://travis-ci.org/mong-go/mongod)
+[![GoDoc](https://godoc.org/gopkg.in/mong-go/mongod.v1?status.svg)](http://godoc.org/gopkg.in/mong-go/mongod.v1)
 
 A simple start/stop struct for *mgo* sessions.
 
 ## Install
 
-    go get gopkg.in/go-mong/mongod.v1
+    go get gopkg.in/mong-go/mongod.v1
 
 ## Usage
 
@@ -38,7 +38,7 @@ On `Stop` callbacks can be performed by passing in a `func(*mgo.Database)`.
       }
     }
 
-    defer m.Stop(cleandb)
+    defer m.Stop(cleandb(t))
 
 ## License
 
