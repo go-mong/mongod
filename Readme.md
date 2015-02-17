@@ -1,11 +1,16 @@
-# gomon/mongod
+# mongod
 
-[![GoDoc](https://godoc.org/github.com/gomon/mongod?status.svg)](http://godoc.org/github.com/gomon/mongod)
+[![Build Status](https://travis-ci.org/go-mong/mongod.svg?branch=master)](https://travis-ci.org/go-mong/mongod)
+[![GoDoc](https://godoc.org/github.com/go-mong/mongod.v1?status.svg)](http://godoc.org/github.com/go-mong/mongod.v1)
 
 A simple start/stop struct for *mgo* sessions.
 
-## Example
-    
+## Install
+
+    go get gopkg.in/go-mong/mongod.v1
+
+## Usage
+
     m := mongod.New("databaseName")
     db, err := m.Start()
     if err != nil {
@@ -17,28 +22,23 @@ A simple start/stop struct for *mgo* sessions.
 
 ---
 
-If you need to do something just prior to `Stop`, eg. Test teardowns. `Stop` accepts `func(s)` that will be run before the session is closed
+On `Stop` callbacks can be performed by passing in a `func(*mgo.Database)`.
 
-    var cleandb = func(db *mgo.Database) {
-      for _, v := range []string{
-        "collection1",
-        "collection2",
-      } {
-        c := db.C(v)
-        _, err := c.RemoveAll(bson.M{})
-        if err != nil {
-          panic(err)
+    var cleandb = func(t *testing.T) func(*mgo.Database) {
+      return func(db *mgo.Database) {
+        for _, v := range []string{
+          "collection1",
+          "collection2",
+        } {
+          _, err := db.C(v)c.RemoveAll(bson.M{})
+          if err != nil {
+            t.Fatal(err)
+          }
         }
       }
     }
 
     defer m.Stop(cleandb)
-
----
-
-`mongod` will return the database from a clone of the original `Dial` session. You can call `Session` to grab the original session.
-
-    s := m.Session() // original Dial session
 
 ## License
 
