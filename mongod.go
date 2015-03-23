@@ -2,6 +2,7 @@ package mongod
 
 import (
 	"gopkg.in/mgo.v2"
+	mgourl "gopkg.in/mong-go/url.v1"
 )
 
 type Mongod interface {
@@ -44,6 +45,20 @@ func New(name string, opts ...func(c *Config)) *mongod {
 		v(m.Config)
 	}
 	return m
+}
+
+// Parse returns a mongod instance from a mongodb:// url string
+func Parse(urlStr string) (*mongod, error) {
+	u, err := mgourl.Parse(urlStr)
+	if err != nil {
+		return nil, err
+	}
+
+	setAddr := func(c *Config) {
+		c.Addr = u.ShortString()
+	}
+
+	return New(u.Database(), setAddr), nil
 }
 
 // Session returns the original mgo.Sesssion
